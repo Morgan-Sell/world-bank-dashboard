@@ -33,9 +33,9 @@ def return_figures(countries=asian_countries):
     
     # World Bank trade-related indicators.
     # TX.VAL.MRCH.XD.WD = Export value index (2000 = 100)
-    # IC.EXP.CSBC.CD = Export value index (2000=100)
+    # IC.EXP.CSBC.CD = Cost of export
     # GC.TAX.EXPT.ZS = Taxes on exports (% of tax revenue)
-    #  BN.GSR.GNFS.CD
+    # BN.GSR.GNFS.CD = Net export (BoP)
     indicators = ['TX.VAL.MRCH.XD.WD ', 'IC.EXP.CSBC.CD', 'GC.TAX.EXPT.ZS', ' BN.GSR.GNFS.CD']
     
     data_frames = []
@@ -62,18 +62,24 @@ def return_figures(countries=asian_countries):
     
     graph_one = []
     df_one = pd.DataFrame(data_frames[0])
+    df_one.columns = ['country', 'year', 'export_value_idx']
+    country_list = df_one['country'].unique().tolist()
 
-    graph_one.append(
-      go.Scatter(
-      x = [0, 1, 2, 3, 4, 5],
-      y = [0, 2, 4, 6, 8, 10],
-      mode = 'lines'
+    for country in country_list:
+      x_val = df_one[df_one['country'] == country].year.tolist()
+      y_val = df_one[df_one['country'] == country].export_value_idx.tolist()
+      graph_one.append(
+        go.Scatter(
+        x = x_val,
+        y = y_val,
+        mode = 'lines',
+        name = country
+        )
       )
-    )
 
-    layout_one = dict(title = 'Chart One',
-                xaxis = dict(title = 'x-axis label'),
-                yaxis = dict(title = 'y-axis label'),
+    layout_one = dict(title = 'Annual Export Value Trend',
+                xaxis = dict(title = 'Year'),
+                yaxis = dict(title = 'Export Value Index (2000 = 100)'),
                 )
 
 # second chart plots ararble land for 2015 as a bar chart    
