@@ -82,47 +82,70 @@ def return_figures(countries=asian_countries):
                 yaxis = dict(title = 'Export Value Index (2000 = 100)'),
                 )
 
-# second chart plots ararble land for 2015 as a bar chart    
+# second chart plots 2018 cost to export by country.   
     graph_two = []
+    df_two = pd.DataFrame(data_frames[1])
+    df_two.columns = ['country', 'year', 'cost_of_export_usd']
+    df_two = df_two[df_two['year'] == 2018]
+    
+    x_val = df_two['country'].unique().tolist()
+    y_val = df_two['cost_of_export_usd'] 
 
     graph_two.append(
       go.Bar(
-      x = ['a', 'b', 'c', 'd', 'e'],
-      y = [12, 9, 7, 5, 1],
+      x = x_val,
+      y = y_val,
       )
     )
 
-    layout_two = dict(title = 'Chart Two',
-                xaxis = dict(title = 'x-axis label',),
-                yaxis = dict(title = 'y-axis label'),
+    layout_two = dict(title = '2018 Cost of Exports in U.S. Dollars',
+                xaxis = dict(title = 'Country',),
+                yaxis = dict(title = 'USD'),
                 )
 
 
-# third chart plots percent of population that is rural from 1990 to 2015
+# third chart plots 2018 taxes on export as percentage of revenue
     graph_three = []
+    df_three = pd.DataFrame(data_frames[2])
+    df_threee.columns = ['country', 'year', 'export_taxes']
+    df_three = df_three[df_three['year'] == 2018]
+    
+    x_val = df_three['country'].unique().tolist()
+    y_val = df_three['export_taxes']
     graph_three.append(
       go.Scatter(
-      x = [5, 4, 3, 2, 1, 0],
-      y = [0, 2, 4, 6, 8, 10],
-      mode = 'lines'
+      x = x_val,
+      y = y_val,
+      mode = 'bars'
       )
     )
 
-    layout_three = dict(title = 'Chart Three',
-                xaxis = dict(title = 'x-axis label'),
-                yaxis = dict(title = 'y-axis label')
+    layout_three = dict(title = '2018 Export Taxes as Percentage of Sales',
+    
+                xaxis = dict(title = 'Country'),
+                yaxis = dict(title = '% - Revenue')
                        )
     
-# fourth chart shows rural population vs arable land
+
+for country in country_list:
+    x_val = df_one[df_one['country'] == country].year.tolist()
+    y_val = df_one[df_one['country'] == country].export_value_idx.tolist()
+
+# fourth chart shows annual trend of balance of payments (net exports) for each country
     graph_four = []
+    df_four = pd.DataFrame(data_frames[3])
+    df_four.columns = ['country', 'year', 'bal_of_pmts']
     
-    graph_four.append(
-      go.Scatter(
-      x = [20, 40, 60, 80],
-      y = [10, 20, 30, 40],
-      mode = 'markers'
+    for country in country_list:
+      x_val = df_four[df_four['country'] == country].year.tolist()
+      y_val = df_four[df_four['country'] == country].bal_of_pmts.tolist()
+      graph_four.append(
+        go.Scatter(
+        x = x_val,
+        y = y_val,
+        mode = 'lines'
+        )
       )
-    )
 
     layout_four = dict(title = 'Chart Four',
                 xaxis = dict(title = 'x-axis label'),
