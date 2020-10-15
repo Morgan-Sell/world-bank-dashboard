@@ -1,10 +1,18 @@
 import pandas as pd
 import plotly.graph_objs as go
+import numpy as np
+from collections import OrderedDict
+import requests
 
 # Use this file to read in your data and prepare the plotly visualizations. The path to the data files are in
 # `data/file_name.csv`
 
-def return_figures():
+# Excluding China and India.
+asian_countries = OrderedDict([('Cambodia', 'KHM'), ('Hong Kong', 'HKG'), ('Indonesia', 'IDN'), ('Japan', 'JPN'), ('Laos', 'LAO'),
+                              ('Malaysia', 'MYS'), ('Myanmar', 'MMR'), ('Nepal', 'NPL'), ('Philippines', 'PHL'), ('Singapore', 'SGP'),
+                              ('Taiwan', 'TWN'), ('Thailand', 'THA'), ('Vietnam', 'VNM')])
+
+def return_figures(countries=asian_countries):
     """Creates four plotly visualizations
 
     Args:
@@ -14,11 +22,47 @@ def return_figures():
         list (dict): list containing the four plotly visualizations
 
     """
+    # Set asian_countries as default.
+    if not bool(countries):
+      countries = asian_countries
+    
+    # Format country codes to use in url address.
+    country_codes = list(countries.values())
+    country_codes = [x.lower() for x in country_codes]
+    country_codes = ':'.join(country_codes)    
+    
+    # World Bank trade-related indicators.
+    # TX.VAL.MRCH.XD.WD = Export value index (2000 = 100)
+    # IC.EXP.CSBC.CD = Export value index (2000=100)
+    # GC.TAX.EXPT.ZS = Taxes on exports (% of tax revenue)
+    #  BN.GSR.GNFS.CD
+    indicators = ['TX.VAL.MRCH.XD.WD ', 'IC.EXP.CSBC.CD', 'GC.TAX.EXPT.ZS', ' BN.GSR.GNFS.CD']
+    
+    data_frames = []
+    urls = []
+
+    for indicator in indicators:
+      url = 'http://api.worldbank/org/v2/countries/' + country_codes + '/indicators/' + indicator + '?date=2000:2018&per_page=1000&format=json'
+      urls.append(url)
+
+      try:
+        r = requests.get(url)
+        data=r.json()[1]
+      except:
+        print('Could not load data ', indicator)
+      
+      for idx, value in enumerate(data):
+        value['indicator'] = value['indicator']['value']
+        value['country'] = value['country']['value']
+      
+      data_frames.append(data)
 
     # first chart plots arable land from 1990 to 2015 in top 10 economies 
     # as a line chart
     
-    graph_one = []    
+    graph_one = []
+    df_one = pd.DataFrame(data_frames[0])
+
     graph_one.append(
       go.Scatter(
       x = [0, 1, 2, 3, 4, 5],
