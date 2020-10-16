@@ -51,14 +51,13 @@ def return_figures(countries=asian_countries):
       except:
         print('Could not load data ', indicator)
       
-      for idx, value in enumerate(data):
+      for value in data:
         value['indicator'] = value['indicator']['value']
         value['country'] = value['country']['value']
       
       data_frames.append(data)
 
-    # first chart plots arable land from 1990 to 2015 in top 10 economies 
-    # as a line chart
+    # First chat is a line plot showing total export value annual trend by country.
     
     graph_one = []
     df_one = pd.DataFrame(data_frames[0])
@@ -107,7 +106,7 @@ def return_figures(countries=asian_countries):
 # third chart plots 2018 taxes on export as percentage of revenue
     graph_three = []
     df_three = pd.DataFrame(data_frames[2])
-    df_threee.columns = ['country', 'year', 'export_taxes']
+    df_three.columns = ['country', 'year', 'export_taxes']
     df_three = df_three[df_three['year'] == 2018]
     
     x_val = df_three['country'].unique().tolist()
@@ -127,10 +126,6 @@ def return_figures(countries=asian_countries):
                        )
     
 
-for country in country_list:
-    x_val = df_one[df_one['country'] == country].year.tolist()
-    y_val = df_one[df_one['country'] == country].export_value_idx.tolist()
-
 # fourth chart shows annual trend of balance of payments (net exports) for each country
     graph_four = []
     df_four = pd.DataFrame(data_frames[3])
@@ -147,9 +142,9 @@ for country in country_list:
         )
       )
 
-    layout_four = dict(title = 'Chart Four',
-                xaxis = dict(title = 'x-axis label'),
-                yaxis = dict(title = 'y-axis label'),
+    layout_four = dict(title = 'Annual Trend Analysis of Balance of Payments (Net Export)',
+                xaxis = dict(title = 'Year'),
+                yaxis = dict(title = 'USD'),
                 )
     
     # append all charts to the figures list
